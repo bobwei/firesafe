@@ -17,7 +17,7 @@ var firesafe = React.createClass({
 
     return (
       <NavigatorIOS
-        style={styles.container}
+        style={styles.navigator}
         initialRoute={{
           component: MainView,
           title: 'Firesafe'
@@ -32,7 +32,7 @@ var firesafe = React.createClass({
 });
 
 var styles = StyleSheet.create({
-  container: {
+  navigator: {
     flex: 1,
   }
 });
