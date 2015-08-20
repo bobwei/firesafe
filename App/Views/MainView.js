@@ -8,22 +8,29 @@ var {
   TouchableHighlight,
 } = React;
 var Constants = require('../Constants');
+var UserListView = require('./UserListView');
 
 var MainView = React.createClass({
+  getInitialState: () => {
+    return {};
+  },
   onClickHandler: () => {
-    console.log('onClickHandler');
+
   },
   render: function() {
     return (
       <View style={styles.container}>
-        <TouchableHighlight
-          style={styles.button}
-          underlayColor={Constants.buttonRed}
-          onPress={this.onClickHandler}>
-            <Text style={styles.buttonText}>
-              更新我的血氧濃度
-            </Text>
-        </TouchableHighlight>
+        <View style={styles.buttonWrapper}>
+          <TouchableHighlight
+            style={styles.button}
+            underlayColor={Constants.buttonRed}
+            onPress={this.onClickHandler}>
+              <Text style={styles.buttonText}>
+                更新我的血氧濃度
+              </Text>
+          </TouchableHighlight>
+        </View>
+        <UserListView/>
       </View>
     );
   }
@@ -32,13 +39,14 @@ var MainView = React.createClass({
 var styles = StyleSheet.create({
   'container': {
     flex: 1,
-    alignItems: 'center',
     paddingTop: 64 + 30,
+  },
+  buttonWrapper: {
+    alignItems: 'center',
   },
   'button': {
     height: 44,
     width: 290,
-    color: Constants.buttonTextColorWhite,
     backgroundColor: Constants.buttonRed,
     justifyContent: 'center',
     alignItems: 'center',
@@ -47,8 +55,6 @@ var styles = StyleSheet.create({
   buttonText: {
     color: Constants.buttonTextColorWhite,
     fontSize: 17,
-    textAlign: 'center',
-    margin: 20
   }
 });
 

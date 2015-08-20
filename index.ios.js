@@ -25,7 +25,7 @@ var firesafe = React.createClass({
         tintColor="#FFFFFF"
         barTintColor="#24CA99"
         titleTextColor="#FFFFFF"
-        translucent="true"
+        translucent={true}
       />
     );
   }
