@@ -9,7 +9,7 @@ var {
   ListView,
 } = React;
 var Constants = require('../Constants');
-// var MPC = require('react-native').NativeModules.MPC;
+var MPC = require('react-native').NativeModules.MPC;
 
 var UserListView = React.createClass({
   getInitialState: () => {
@@ -30,10 +30,9 @@ var UserListView = React.createClass({
       }]),
     };
   },
-  componentDidMount: () => {
-    // MPC.init('Hello World NativeModules', (error, response) => {
-    //   console.log(response);
-    // });
+  componentDidMount: function(){
+    MPC.initConnection();
+    MPC.connect();
   },
   getStatusWords: function(status){
     if (status === 'normal'){

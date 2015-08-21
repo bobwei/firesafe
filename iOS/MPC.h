@@ -11,9 +11,12 @@
 #import "RCTEventDispatcher.h"
 #import "RCTBridgeModule.h"
 
-@interface MPC : NSObject <RCTBridgeModule, MCNearbyServiceAdvertiserDelegate>{
+@interface MPC : NSObject <RCTBridgeModule, MCSessionDelegate, MCNearbyServiceAdvertiserDelegate, MCNearbyServiceBrowserDelegate>{
   NSString *displayName;
   RCTResponseSenderBlock callbackBlock;
+  MCNearbyServiceAdvertiser *advertiser;
+  MCNearbyServiceBrowser *browser;
+  MCSession *session;
   MCPeerID *localPeerID;
 }
 
