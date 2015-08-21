@@ -21,12 +21,19 @@ var UserListView = React.createClass({
         id: '2',
         name: 'Mark Zuckerberg',
         status: 'warning'
+      }, {
+        id: '3',
+        name: 'Steve Jobs',
+        status: 'dangerous'
       }]),
     };
   },
   render: function() {
     return (
       <View style={styles.container}>
+        <Text style={styles.userListCount}>
+          {this.state.dataSource.rowIdentities.length} 位成員
+        </Text>
         <ListView
           dataSource={this.state.dataSource}
           renderRow={(rowData) => {
@@ -62,6 +69,15 @@ var styles = StyleSheet.create({
   },
   'cellStyle': {
     padding: 15,
+  },
+  'userListCount': {
+    fontSize: 15,
+    color: '#4A4A4A',
+    paddingTop: 10,
+    paddingLeft: 15,
+    paddingRight: 15,
+    paddingBottom: 10,
+    marginTop: 30,
   },
   'name': {
     fontSize: 18,

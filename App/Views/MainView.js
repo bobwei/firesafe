@@ -50,7 +50,7 @@ var styles = StyleSheet.create({
     backgroundColor: Constants.buttonRed,
     justifyContent: 'center',
     alignItems: 'center',
-    borderRadius: 8
+    borderRadius: 4
   },
   buttonText: {
     color: Constants.buttonTextColorWhite,
