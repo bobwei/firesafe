@@ -28,4 +28,9 @@ RCT_EXPORT_METHOD(
 //  [browser startBrowsingForPeers];
 }
 
+RCT_EXPORT_METHOD(getDeviceName:(RCTResponseSenderBlock)callback)
+{
+  callback(@[[[UIDevice currentDevice] name]]);
+}
+
 @end

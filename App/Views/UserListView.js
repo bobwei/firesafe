@@ -9,7 +9,7 @@ var {
   ListView,
 } = React;
 var Constants = require('../Constants');
-var MPC = require('react-native').NativeModules.MPC;
+// var MPC = require('react-native').NativeModules.MPC;
 
 var UserListView = React.createClass({
   getInitialState: () => {
