@@ -9,6 +9,7 @@ var {
   Text,
   View,
 } = React;
+var Constants = require('./App/Constants');
 var MainView = require('./App/Views/MainView');
 
 var firesafe = React.createClass({
@@ -22,9 +23,9 @@ var firesafe = React.createClass({
           component: MainView,
           title: 'Firesafe'
         }}
-        tintColor="#FFFFFF"
-        barTintColor="#24CA99"
-        titleTextColor="#FFFFFF"
+        tintColor={Constants.buttonTextColorWhite}
+        barTintColor={Constants.buttonGreen}
+        titleTextColor={Constants.buttonTextColorWhite}
         translucent={true}
       />
     );
