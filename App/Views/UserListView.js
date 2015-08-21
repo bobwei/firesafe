@@ -8,6 +8,7 @@ var {
   TouchableHighlight,
   ListView,
 } = React;
+var Constants = require('../Constants');
 
 var UserListView = React.createClass({
   getInitialState: () => {
@@ -28,13 +29,22 @@ var UserListView = React.createClass({
       }]),
     };
   },
-  getStateWords: function(status){
+  getStatusWords: function(status){
     if (status === 'normal'){
       return '正常';
     }else if (status === 'warning'){
       return '異常';
     }else if (status === 'dangerous'){
       return '危險';
+    }
+  },
+  getStatusColor: function(status){
+    if (status === 'normal'){
+      return Constants.buttonGreen;
+    }else if (status === 'warning'){
+      return Constants.buttonYellow;
+    }else if (status === 'dangerous'){
+      return Constants.buttonRed;
     }
   },
   render: function() {
@@ -48,12 +58,17 @@ var UserListView = React.createClass({
           renderRow={(rowData) => {
             return (
               <View key={rowData.id} style={styles.cellStyle}>
-                <Text style={styles.name}>
-                  {rowData.name}
-                </Text>
-                <Text style={styles.status}>
-                  血氧濃度 : {this.getStateWords(rowData.status)}
-                </Text>
+                <View>
+                  <Text style={styles.name}>
+                    {rowData.name}
+                  </Text>
+                  <Text style={styles.status}>
+                    血氧濃度 : {this.getStatusWords(rowData.status)}
+                  </Text>
+                </View>
+                <View>
+                  <View style={[styles.statusIndicator, {backgroundColor: this.getStatusColor(rowData.status)}]}></View>
+                </View>
               </View>
             );
           }}
@@ -74,10 +89,10 @@ var UserListView = React.createClass({
 });
 
 var styles = StyleSheet.create({
-  'container': {
+  container: {
     flex: 1
   },
-  'userListCount': {
+  userListCount: {
     fontSize: 15,
     color: '#4A4A4A',
     paddingTop: 10,
@@ -86,26 +101,35 @@ var styles = StyleSheet.create({
     paddingBottom: 10,
     marginTop: 30,
   },
-  'cellStyle': {
+  cellStyle: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     padding: 15,
   },
-  'name': {
+  name: {
     fontSize: 18,
     marginBottom: 4
   },
-  'status': {
+  status: {
     fontSize: 14,
     color: '#9B9B9B',
   },
-  'separatorStyle': {
+  separatorStyle: {
     backgroundColor: 'rgba(0, 0, 0, 0.1)',
     height: 1,
     marginLeft: 10,
     marginRight: 10
   },
-  'separatorStyleHide': {
+  separatorStyleHide: {
     opacity: 0
-  }
+  },
+  statusIndicator: {
+    width: 10,
+    height: 10,
+    borderRadius: 100,
+    marginTop: 20,
+    backgroundColor: Constants.buttonRed
+  },
 });
 
 module.exports = UserListView;
