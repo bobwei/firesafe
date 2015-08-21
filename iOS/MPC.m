@@ -10,11 +10,22 @@
 
 @implementation MPC
 
+@class MCPeerID;
+static NSString * const XXServiceType = @"hello-service";
+
 RCT_EXPORT_MODULE();
 
-RCT_EXPORT_METHOD(hello:(NSString *)name)
+RCT_EXPORT_METHOD(
+  init:(NSString *)name
+  withInitCallback:(RCTResponseSenderBlock)initCallback
+)
 {
-  NSLog(@"log %@", name);
+  displayName = name;
+  localPeerID = [[MCPeerID alloc] initWithDisplayName:[[UIDevice currentDevice] name]];
+  initCallback(@[@{@"peerId": @"1"}]);
+//  MCNearbyServiceBrowser *browser = [[MCNearbyServiceBrowser alloc] initWithPeer:localPeerID serviceType:XXServiceType];
+//  browser.delegate = self;
+//  [browser startBrowsingForPeers];
 }
 
 @end

@@ -10,6 +10,7 @@ var {
 var Constants = require('../Constants');
 var UserListView = require('./UserListView');
 
+
 var MainView = React.createClass({
   getInitialState: () => {
     return {};
@@ -18,12 +19,15 @@ var MainView = React.createClass({
 
   },
   componentDidMount: () => {
-    var MPC = require('react-native').NativeModules.MPC;
-    MPC.hello('Hello World NativeModules');
+
   },
   render: function() {
     return (
       <View style={styles.container}>
+        <View style={styles.deviceStatusWrapper}>
+          <Text style={styles.name}>Bob Wei</Text>
+          <Text style={styles.deviceStatus}>尚未連結生理數據裝置</Text>
+        </View>
         <View style={styles.buttonWrapper}>
           <TouchableHighlight
             style={styles.button}
@@ -41,14 +45,32 @@ var MainView = React.createClass({
 });
 
 var styles = StyleSheet.create({
-  'container': {
+  container: {
     flex: 1,
-    paddingTop: 64 + 30,
+    paddingTop: 64,
+  },
+  deviceStatusWrapper: {
+    paddingTop: 10,
+    paddingRight: 15,
+    paddingBottom: 10,
+    paddingLeft: 15,
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  deviceStatus: {
+    color: Constants.textGray,
+    fontSize: 12,
+  },
+  name: {
+    fontSize: 17,
+    color: Constants.textBlack,
   },
   buttonWrapper: {
     alignItems: 'center',
   },
-  'button': {
+  button: {
     height: 44,
     width: 290,
     backgroundColor: Constants.buttonRed,
