@@ -17,6 +17,10 @@ var MainView = React.createClass({
   onClickHandler: () => {
 
   },
+  componentDidMount: () => {
+    var MPC = require('react-native').NativeModules.MPC;
+    MPC.hello('Hello World NativeModules');
+  },
   render: function() {
     return (
       <View style={styles.container}>
