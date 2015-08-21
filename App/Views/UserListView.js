@@ -28,11 +28,20 @@ var UserListView = React.createClass({
       }]),
     };
   },
+  getStateWords: function(status){
+    if (status === 'normal'){
+      return '正常';
+    }else if (status === 'warning'){
+      return '異常';
+    }else if (status === 'dangerous'){
+      return '危險';
+    }
+  },
   render: function() {
     return (
       <View style={styles.container}>
         <Text style={styles.userListCount}>
-          {this.state.dataSource.rowIdentities.length} 位成員
+          {this.state.dataSource.getRowCount()} 位成員
         </Text>
         <ListView
           dataSource={this.state.dataSource}
@@ -43,7 +52,7 @@ var UserListView = React.createClass({
                   {rowData.name}
                 </Text>
                 <Text style={styles.status}>
-                  血氧濃度 : {rowData.status}
+                  血氧濃度 : {this.getStateWords(rowData.status)}
                 </Text>
               </View>
             );
@@ -57,6 +66,7 @@ var UserListView = React.createClass({
               <View key={rowId} style={separatorStyle}/>
             );
           }}
+          automaticallyAdjustContentInsets={false}
         />
       </View>
     );
@@ -67,9 +77,6 @@ var styles = StyleSheet.create({
   'container': {
     flex: 1
   },
-  'cellStyle': {
-    padding: 15,
-  },
   'userListCount': {
     fontSize: 15,
     color: '#4A4A4A',
@@ -78,6 +85,9 @@ var styles = StyleSheet.create({
     paddingRight: 15,
     paddingBottom: 10,
     marginTop: 30,
+  },
+  'cellStyle': {
+    padding: 15,
   },
   'name': {
     fontSize: 18,
