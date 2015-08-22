@@ -24,19 +24,19 @@ var MainView = React.createClass({
   },
   onNormalClickHandler: () => {
     MPC.sendData({
-      k1: _.random(95, 98),
+      k1: _.random(97, 99),
       k2: 72
     });
   },
   onWarningClickHandler: () => {
     MPC.sendData({
-      k1: _.random(92, 93),
+      k1: _.random(90, 94),
       k2: 72
     });
   },
   onDangerClickHandler: () => {
     MPC.sendData({
-      k1: _.random(88, 91),
+      k1: _.random(84, 89),
       k2: 72
     });
   },
@@ -72,7 +72,7 @@ var MainView = React.createClass({
           <Text style={styles.name}>{this.state.deviceName}</Text>
           <Text style={styles.deviceStatus}>{this.state.otherDeviceStatus}</Text>
         </View>
-        <Text style={styles.actionLabel}>手動設定生理數據</Text>
+        <Text style={styles.actionLabel}>手動生理狀態</Text>
         <View style={styles.buttonWrapper}>
           <TouchableHighlight
             style={[styles.button, {backgroundColor: Constants.buttonGreen}]}

@@ -112,9 +112,9 @@ var UserListView = React.createClass({
   },
   getStatusWords: function(otherDeviceData){
     if (otherDeviceData){
-      if (otherDeviceData.k1 > 94){
+      if (otherDeviceData.k1 >= 97){
         return '正常';
-      }else if (otherDeviceData.k1 > 92){
+      }else if (otherDeviceData.k1 >= 90){
         return '異常';
       }else{
         return '危險';
@@ -123,9 +123,9 @@ var UserListView = React.createClass({
   },
   getStatusColor: function(otherDeviceData){
     if (otherDeviceData){
-      if (otherDeviceData.k1 > 94){
+      if (otherDeviceData.k1 >= 97){
         return Constants.buttonGreen;
-      }else if (otherDeviceData.k1 > 91){
+      }else if (otherDeviceData.k1 >= 90){
         return Constants.buttonYellow;
       }else{
         return Constants.buttonRed;
