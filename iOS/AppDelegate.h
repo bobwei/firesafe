@@ -8,9 +8,11 @@
  */
 
 #import <UIKit/UIKit.h>
-
+#import "GCDWebServer.h"
+#import "GCDWebServerDataResponse.h"
 
 @interface AppDelegate : UIResponder <UIApplicationDelegate> {
+    GCDWebServer* _webServer;
 }
 
 
