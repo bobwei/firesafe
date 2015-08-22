@@ -17,7 +17,7 @@ var UserListView = React.createClass({
   getInitialState: () => {
     var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => {
       var hasChanged = Object
-        .keys(r1)
+        .keys(r2)
         .some(function(key){
           return r1[key] !== r2[key];
         });
@@ -40,23 +40,11 @@ var UserListView = React.createClass({
             appStatus: '已開啟連線'
           });
         }else if (appStatus.status === 'logPeers'){
-          // var dataBlob = this.state.dataSource._dataBlob;
-          // var rowIDs = Object
-          //               .keys(dataBlob)
-          //               .reduce(function(s, key){
-          //                 return s.concat(dataBlob[key]);
-          //               }, [])
-          //               .map(function(row){
-          //                 return row.id;
-          //               });
-          // this.setState({
-          //   dataSource: this.state.dataSource
-          //     .cloneWithRows(
-          //       appStatus.data.filter(function(row){
-          //         return rowIDs.indexOf(row.id) < 0;
-          //       })
-          //     )
-          // });
+          appStatus.data.forEach((peer) => {
+            if (this.otherDeviceDataCache && this.otherDeviceDataCache[peer.id]){
+              peer.otherDeviceData = this.otherDeviceDataCache[peer.id];
+            }
+          });
           this.setState({
             dataSource: this.state.dataSource
               .cloneWithRows(
@@ -81,14 +69,7 @@ var UserListView = React.createClass({
           });
         }else if (appStatus.status === 'didReceiveData'){
           var dataBlob = this.state.dataSource._dataBlob;
-          var rows = Object
-                      .keys(dataBlob)
-                      .reduce(function(s, key){
-                        return s.concat(dataBlob[key]);
-                      }, [])
-                      .map(function(row){
-                        return assign({}, row);
-                      });
+          var rows = this._dataBlobToRows(dataBlob);
           var row = rows.filter(function(theRow){
             return theRow.id === appStatus.data.peerID;
           })[0];
@@ -97,6 +78,10 @@ var UserListView = React.createClass({
               k1: appStatus.data.k1,
               k2: appStatus.data.k2
             };
+            if (!this.otherDeviceDataCache){
+              this.otherDeviceDataCache = {};
+            }
+            this.otherDeviceDataCache[appStatus.data.peerID] = row.otherDeviceData;
           }
           this.setState({
             dataSource: this.state.dataSource.cloneWithRows(rows)
@@ -113,6 +98,17 @@ var UserListView = React.createClass({
   },
   componentWillUnmount: function(){
     this.subscription.remove();
+  },
+  _dataBlobToRows: function(dataBlob){
+    var rows = Object
+      .keys(dataBlob)
+      .reduce(function(s, key){
+        return s.concat(dataBlob[key]);
+      }, [])
+      .map(function(row){
+        return assign({}, row);
+      });
+    return rows;
   },
   getStatusWords: function(otherDeviceData){
     if (otherDeviceData){
@@ -142,7 +138,6 @@ var UserListView = React.createClass({
         <ListView
           dataSource={this.state.dataSource}
           renderRow={(rowData) => {
-            console.log('renderRow');
             return (
               <View key={rowData.id} style={styles.cellStyle}>
                 <View>
