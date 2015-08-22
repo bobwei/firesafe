@@ -22,7 +22,10 @@ var MainView = React.createClass({
     };
   },
   onClickHandler: () => {
-
+    MPC.sendData({
+      k1: 1.0,
+      k2: 2.0
+    });
   },
   componentDidMount: function() {
     MPC.getDeviceName((deviceName) => {

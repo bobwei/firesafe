@@ -14,7 +14,14 @@ var MPC = require('react-native').NativeModules.MPC;
 
 var UserListView = React.createClass({
   getInitialState: () => {
-    var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
+    var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => {
+      var hasChanged = Object
+        .keys(r1)
+        .some(function(key){
+          return r1[key] !== r2[key];
+        });
+      return hasChanged;
+    }});
     return {
       appStatus: '',
       dataSource: ds.cloneWithRows([]),
@@ -34,11 +41,7 @@ var UserListView = React.createClass({
         }else if (appStatus.status === 'logPeers'){
           this.setState({
             dataSource: this.state.dataSource
-              .cloneWithRows(appStatus.data.map(function(peer, i){
-                return {
-                  name: peer,
-                };
-              }))
+              .cloneWithRows(appStatus.data)
           });
         }else if (appStatus.status === 'foundPeers'){
           this.setState({
@@ -56,6 +59,33 @@ var UserListView = React.createClass({
           this.setState({
             appStatus: '未連線',
           });
+        }else if (appStatus.status === 'didReceiveData'){
+          var dataBlob = this.state.dataSource._dataBlob;
+          var rows = Object
+                          .keys(dataBlob)
+                          .reduce(function(s, key){
+                            return s.concat(dataBlob[key]);
+                          }, [])
+                          .map(function(row){
+                            var newRow = {};
+                            Object.keys(row)
+                                  .forEach(function(key){
+                                    newRow[key] = row[key];
+                                  });
+                            return newRow;
+                          });
+          var row = rows.filter(function(theRow){
+            return theRow.id === appStatus.data.peerID;
+          })[0];
+          if (row){
+            row.otherDeviceData = {
+              k1: appStatus.data.k1,
+              k2: appStatus.data.k2
+            };
+          }
+          this.setState({
+            dataSource: this.state.dataSource.cloneWithRows(rows)
+          });
         }
         console.log(appStatus);
         setTimeout(() => {
@@ -69,22 +99,18 @@ var UserListView = React.createClass({
   componentWillUnmount: function(){
     this.subscription.remove();
   },
-  getStatusWords: function(status){
-    if (status === 'normal'){
-      return '正常';
-    }else if (status === 'warning'){
-      return '異常';
-    }else if (status === 'dangerous'){
-      return '危險';
+  getStatusWords: function(otherDeviceData){
+    if (otherDeviceData){
+      if (otherDeviceData.k1 > 0 && otherDeviceData.k2 > 0){
+        return '正常';
+      }
     }
   },
-  getStatusColor: function(status){
-    if (status === 'normal'){
-      return Constants.buttonGreen;
-    }else if (status === 'warning'){
-      return Constants.buttonYellow;
-    }else if (status === 'dangerous'){
-      return Constants.buttonRed;
+  getStatusColor: function(otherDeviceData){
+    if (otherDeviceData){
+      if (otherDeviceData.k1 > 0 && otherDeviceData.k2 > 0){
+        return 'green';
+      }
     }
   },
   render: function() {
@@ -101,18 +127,19 @@ var UserListView = React.createClass({
         <ListView
           dataSource={this.state.dataSource}
           renderRow={(rowData) => {
+            console.log('renderRow');
             return (
               <View key={rowData.id} style={styles.cellStyle}>
                 <View>
                   <Text style={styles.name}>
-                    {rowData.name}
+                    {rowData.displayName}
                   </Text>
                   <Text style={styles.status}>
-                    血氧濃度 : {this.getStatusWords(rowData.status)}
+                    生理數據 : {this.getStatusWords(rowData.otherDeviceData)}
                   </Text>
                 </View>
                 <View>
-                  <View style={[styles.statusIndicator, {backgroundColor: this.getStatusColor(rowData.status)}]}></View>
+                  <View style={[styles.statusIndicator, {backgroundColor: this.getStatusColor(rowData.otherDeviceData)}]}></View>
                 </View>
               </View>
             );

@@ -66,6 +66,11 @@ RCT_EXPORT_METHOD(getDeviceName:(RCTResponseSenderBlock)callback)
   callback(@[[[UIDevice currentDevice] name]]);
 }
 
+RCT_EXPORT_METHOD(sendData:(NSDictionary *)data)
+{
+  [session sendData:[NSKeyedArchiver archivedDataWithRootObject:data] toPeers:session.connectedPeers withMode:MCSessionSendDataReliable error:NULL];
+}
+
 #pragma mark - Private
 
 RCT_EXPORT_METHOD(logPeers)
@@ -73,8 +78,8 @@ RCT_EXPORT_METHOD(logPeers)
   NSArray *peers = session.connectedPeers;
   NSMutableArray *displayNames = [[NSMutableArray alloc] init];
   for (MCPeerID *peer in peers) {
-    NSLog(@"peer %@", peer);
-    [displayNames addObject:peer.displayName];
+    [displayNames addObject:@{@"id": [@(peer.hash) stringValue],
+                              @"displayName": peer.displayName}];
   }
   [self.bridge.eventDispatcher sendAppEventWithName:AppStatus
                                                body:@{@"status": @"logPeers",
@@ -85,6 +90,11 @@ RCT_EXPORT_METHOD(logPeers)
 
 - (void)session:(MCSession *)session didReceiveData:(NSData *)data fromPeer:(MCPeerID *)peerID
 {
+  NSMutableDictionary *dataDictionary = [(NSDictionary*) [NSKeyedUnarchiver unarchiveObjectWithData:data] mutableCopy];
+  [dataDictionary setValue:[@(peerID.hash) stringValue] forKey:@"peerID"];
+  [self.bridge.eventDispatcher sendAppEventWithName:AppStatus
+                                               body:@{@"status": @"didReceiveData",
+                                                      @"data": dataDictionary}];
 }
 
 - (void)session:(MCSession *)session didReceiveStream:(NSInputStream *)stream withName:(NSString *)streamName fromPeer:(MCPeerID *)peerID
