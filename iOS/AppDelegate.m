@@ -17,6 +17,24 @@
 {
   NSURL *jsCodeLocation;
 
+  // Create server
+  _webServer = [[GCDWebServer alloc] init];
+  
+  // Add a handler to respond to GET requests on any URL
+  [_webServer addDefaultHandlerForMethod:@"POST"
+                            requestClass:[GCDWebServerRequest class]
+                            processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
+                                  NSLog(@"%lu", request.contentLength);
+                              return [GCDWebServerDataResponse responseWithHTML:@"<html><body><p>Hello World</p></body></html>"];
+                              
+                            }];
+  
+  // Start server on port 8080
+  [_webServer startWithPort:8080 bonjourName:nil];
+  NSLog(@"Visit %@ in your web browser", _webServer.serverURL);
+  
+  
+  
   /**
    * Loading JavaScript code - uncomment the one you want.
    *
