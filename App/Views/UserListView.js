@@ -7,6 +7,7 @@ var {
   View,
   TouchableHighlight,
   ListView,
+  NativeAppEventEmitter,
 } = React;
 var Constants = require('../Constants');
 var MPC = require('react-native').NativeModules.MPC;
@@ -15,24 +16,58 @@ var UserListView = React.createClass({
   getInitialState: () => {
     var ds = new ListView.DataSource({rowHasChanged: (r1, r2) => r1 !== r2});
     return {
-      dataSource: ds.cloneWithRows([{
-        id: '1',
-        name: 'Bob Wei',
-        status: 'normal'
-      }, {
-        id: '2',
-        name: 'Mark Zuckerberg',
-        status: 'warning'
-      }, {
-        id: '3',
-        name: 'Steve Jobs',
-        status: 'dangerous'
-      }]),
+      appStatus: '',
+      dataSource: ds.cloneWithRows([]),
     };
   },
   componentDidMount: function(){
     MPC.initConnection();
     MPC.connect();
+    this.subscription = NativeAppEventEmitter.addListener(
+      'AppStatus',
+      (appStatus) => {
+        clearTimeout(this.clearEventTimer);
+        if (appStatus.status === 'connecting'){
+          this.setState({
+            appStatus: '已開啟連線'
+          });
+        }else if (appStatus.status === 'logPeers'){
+          this.setState({
+            dataSource: this.state.dataSource
+              .cloneWithRows(appStatus.data.map(function(peer, i){
+                return {
+                  name: peer,
+                };
+              }))
+          });
+        }else if (appStatus.status === 'foundPeers'){
+          this.setState({
+            appStatus: '發現' + appStatus.data.displayName,
+          });
+        }else if (appStatus.status === 'MCSessionStateConnecting'){
+          this.setState({
+            appStatus: '連線中...',
+          });
+        }else if (appStatus.status === 'MCSessionStateConnected'){
+          this.setState({
+            appStatus: '已連線',
+          });
+        }else if (appStatus.status === 'MCSessionStateNotConnected'){
+          this.setState({
+            appStatus: '未連線',
+          });
+        }
+        console.log(appStatus);
+        setTimeout(() => {
+          this.setState({
+            appStatus: ''
+          });
+        }, 10000);
+      }
+    );
+  },
+  componentWillUnmount: function(){
+    this.subscription.remove();
   },
   getStatusWords: function(status){
     if (status === 'normal'){
@@ -55,9 +90,14 @@ var UserListView = React.createClass({
   render: function() {
     return (
       <View style={styles.container}>
-        <Text style={styles.userListCount}>
-          {this.state.dataSource.getRowCount()} 位成員
-        </Text>
+        <View style={styles.appStatusWrapper}>
+          <Text style={styles.userListCount}>
+            {this.state.dataSource.getRowCount()} 位成員
+          </Text>
+          <Text style={styles.appStatus}>
+            {this.state.appStatus}
+          </Text>
+        </View>
         <ListView
           dataSource={this.state.dataSource}
           renderRow={(rowData) => {
@@ -97,14 +137,23 @@ var styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  userListCount: {
-    fontSize: 15,
-    color: '#4A4A4A',
+  appStatusWrapper: {
     paddingTop: 10,
-    paddingLeft: 15,
     paddingRight: 15,
     paddingBottom: 10,
-    marginTop: 30,
+    paddingLeft: 15,
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  userListCount: {
+    fontSize: 17,
+    color: Constants.textBlack,
+  },
+  appStatus: {
+    fontSize: 12,
+    color: Constants.textGray,
   },
   cellStyle: {
     flexDirection: 'row',

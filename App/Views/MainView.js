@@ -41,7 +41,7 @@ var MainView = React.createClass({
             underlayColor={Constants.buttonRed}
             onPress={this.onClickHandler}>
               <Text style={styles.buttonText}>
-                更新我的生理數據
+                手動更新我的生理數據
               </Text>
           </TouchableHighlight>
         </View>

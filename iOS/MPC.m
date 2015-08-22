@@ -12,6 +12,9 @@
 
 @class MCPeerID;
 static NSString * const XXServiceType = @"hello-service";
+static NSString * const AppStatus = @"AppStatus";
+
+@synthesize bridge = _bridge;
 
 RCT_EXPORT_MODULE();
 
@@ -25,8 +28,9 @@ RCT_EXPORT_METHOD(initConnection)
 
 RCT_EXPORT_METHOD(connect)
 {
-  NSLog(@"Peer %@ is connecting", displayName);
-
+  [self.bridge.eventDispatcher sendAppEventWithName:AppStatus
+                                               body:@{@"status": @"connecting"}];
+  
   session = [[MCSession alloc] initWithPeer:localPeerID securityIdentity:nil encryptionPreference:MCEncryptionNone];
   session.delegate = self;
 
@@ -41,7 +45,8 @@ RCT_EXPORT_METHOD(connect)
 
 RCT_EXPORT_METHOD(disconnect)
 {
-  NSLog(@"Peer %@ is disonnecting", displayName);
+  [self.bridge.eventDispatcher sendAppEventWithName:AppStatus
+                                               body:@{@"status": @"disconnected"}];
   
   [advertiser stopAdvertisingPeer];
   advertiser.delegate = nil;
@@ -68,9 +73,12 @@ RCT_EXPORT_METHOD(logPeers)
   NSArray *peers = session.connectedPeers;
   NSMutableArray *displayNames = [[NSMutableArray alloc] init];
   for (MCPeerID *peer in peers) {
+    NSLog(@"peer %@", peer);
     [displayNames addObject:peer.displayName];
   }
-  NSLog(@"%@ peers: %@", localPeerID.displayName, displayNames);
+  [self.bridge.eventDispatcher sendAppEventWithName:AppStatus
+                                               body:@{@"status": @"logPeers",
+                                                      @"data": displayNames}];
 }
 
 #pragma mark - MCSessionDelegate
@@ -93,14 +101,22 @@ RCT_EXPORT_METHOD(logPeers)
 
 - (void)session:(MCSession *)session peer:(MCPeerID *)peerID didChangeState:(MCSessionState)state
 {
+  NSString *stateMessage;
+  NSString *message;
   if (state == MCSessionStateConnecting) {
-    NSLog(@"%@ received MCSessionStateConnecting for %@", localPeerID.displayName, peerID.displayName);
+    message = [NSString stringWithFormat:@"%@ received MCSessionStateConnecting for %@", localPeerID.displayName, peerID.displayName];
+    stateMessage = @"MCSessionStateConnecting";
   }
   else if (state == MCSessionStateConnected) {
-    NSLog(@"%@ received MCSessionStateConnected for %@", localPeerID.displayName, peerID.displayName);
+    message = [NSString stringWithFormat:@"%@ received MCSessionStateConnected for %@", localPeerID.displayName, peerID.displayName];
+    stateMessage = @"MCSessionStateConnected";
   } else if (state == MCSessionStateNotConnected) {
-    NSLog(@"%@ received MCSessionStateNotConnected for %@", localPeerID.displayName, peerID.displayName);
+    message = [NSString stringWithFormat:@"%@ received MCSessionStateNotConnected for %@", localPeerID.displayName, peerID.displayName];
+    stateMessage = @"MCSessionStateNotConnected";
   }
+  NSLog(@"%@", message);
+  [self.bridge.eventDispatcher sendAppEventWithName:AppStatus
+                                               body:@{@"status": stateMessage}];
   [self logPeers];
 }
 
@@ -108,26 +124,39 @@ RCT_EXPORT_METHOD(logPeers)
 
 - (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didNotStartAdvertisingPeer:(NSError *)error
 {
-  NSLog(@"Advertiser %@ did not start advertising with error: %@", localPeerID.displayName, error.localizedDescription);
+  NSString *message;
+  message = [NSString stringWithFormat:@"Advertiser %@ did not start advertising with error: %@", localPeerID.displayName, error.localizedDescription];
+  [self.bridge.eventDispatcher sendAppEventWithName:AppStatus
+                                               body:@{@"status": message}];
 }
 
 - (void)advertiser:(MCNearbyServiceAdvertiser *)advertiser didReceiveInvitationFromPeer:(MCPeerID *)peerID withContext:(NSData *)context invitationHandler:(void (^)(BOOL, MCSession *))invitationHandler
 {
-  NSLog(@"Advertiser %@ received an invitation from %@", localPeerID.displayName, peerID.displayName);
+  NSString *message;
+  message = [NSString stringWithFormat:@"Advertiser %@ received an invitation from %@", localPeerID.displayName, peerID.displayName];
+  [self.bridge.eventDispatcher sendAppEventWithName:AppStatus
+                                               body:@{@"status": message}];
   invitationHandler(YES, session);
-  NSLog(@"Advertiser %@ accepted invitation from %@", localPeerID.displayName, peerID.displayName);
+  message = [NSString stringWithFormat:@"Advertiser %@ accepted invitation from %@", localPeerID.displayName, peerID.displayName];
+  [self.bridge.eventDispatcher sendAppEventWithName:AppStatus
+                                               body:@{@"status": message}];
 }
 
 #pragma mark - MCNearbyServiceBrowserDelegate
 
 - (void)browser:(MCNearbyServiceBrowser *)browser didNotStartBrowsingForPeers:(NSError *)error
 {
-  NSLog(@"Browser %@ did not start browsing with error: %@", localPeerID.displayName, error.localizedDescription);
+  NSString *message;
+  message = [NSString stringWithFormat:@"Browser %@ did not start browsing with error: %@", localPeerID.displayName, error.localizedDescription];
+  [self.bridge.eventDispatcher sendAppEventWithName:AppStatus
+                                               body:@{@"status": message}];
 }
 
 - (void)browser:(MCNearbyServiceBrowser *)nearbyBrowser foundPeer:(MCPeerID *)peerID withDiscoveryInfo:(NSDictionary *)info
 {
-  NSLog(@"Browser %@ found %@", localPeerID.displayName, peerID.displayName);
+  [self.bridge.eventDispatcher sendAppEventWithName:AppStatus
+                                               body:@{@"status": @"foundPeers",
+                                                      @"data": @{@"displayName": peerID.displayName}}];
   
   // Should I invite the peer or should the peer invite me? Let the decision be based on the comparison of the hash values of the peerId.
   BOOL shouldInvite = localPeerID.hash < peerID.hash;
@@ -143,7 +172,9 @@ RCT_EXPORT_METHOD(logPeers)
 
 - (void)browser:(MCNearbyServiceBrowser *)browser lostPeer:(MCPeerID *)peerID
 {
-  NSLog(@"Browser %@ lost %@", localPeerID.displayName, peerID.displayName);
+  NSString *message;
+  message = [NSString stringWithFormat:@"Browser %@ lost %@", localPeerID.displayName, peerID.displayName];
+  NSLog(@"%@", message);
   [self logPeers];
 }
 
