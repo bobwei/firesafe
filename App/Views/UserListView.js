@@ -124,11 +124,11 @@ var UserListView = React.createClass({
   getStatusColor: function(otherDeviceData){
     if (otherDeviceData){
       if (otherDeviceData.k1 > 94){
-        return 'green';
+        return Constants.buttonGreen;
       }else if (otherDeviceData.k1 > 92){
-        return 'yello';
+        return Constants.buttonYellow;
       }else{
-        return 'red';
+        return Constants.buttonRed;
       }
     }
   },
