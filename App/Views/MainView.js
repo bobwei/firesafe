@@ -1,6 +1,7 @@
 'use strict';
 
 var React = require('react-native');
+var _ = require('underscore');
 var {
   StyleSheet,
   Text,
@@ -23,8 +24,8 @@ var MainView = React.createClass({
   },
   onClickHandler: () => {
     MPC.sendData({
-      k1: 1.0,
-      k2: 2.0
+      k1: _.random(92, 99),
+      k2: 72
     });
   },
   componentDidMount: function() {
@@ -49,6 +50,12 @@ var MainView = React.createClass({
         console.log(otherDeviceStatus);
       }
     );
+    this.timer = setInterval(() => {
+      this.onClickHandler();
+    }, 5000);
+  },
+  componentWillUnmount: function(){
+    clearInterval(this.timer);
   },
   render: function() {
     return (

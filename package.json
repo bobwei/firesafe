@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "object-assign": "^4.0.1",
-    "react-native": "^0.9.0"
+    "react-native": "^0.9.0",
+    "underscore": "^1.8.3"
   }
 }

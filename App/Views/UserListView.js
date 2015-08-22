@@ -92,7 +92,7 @@ var UserListView = React.createClass({
           this.setState({
             appStatus: ''
           });
-        }, 10000);
+        }, 8000);
       }
     );
   },
@@ -112,15 +112,23 @@ var UserListView = React.createClass({
   },
   getStatusWords: function(otherDeviceData){
     if (otherDeviceData){
-      if (otherDeviceData.k1 > 0 && otherDeviceData.k2 > 0){
+      if (otherDeviceData.k1 > 94){
         return '正常';
+      }else if (otherDeviceData.k1 > 92){
+        return '異常';
+      }else{
+        return '危險';
       }
     }
   },
   getStatusColor: function(otherDeviceData){
     if (otherDeviceData){
-      if (otherDeviceData.k1 > 0 && otherDeviceData.k2 > 0){
+      if (otherDeviceData.k1 > 94){
         return 'green';
+      }else if (otherDeviceData.k1 > 92){
+        return 'yello';
+      }else{
+        return 'red';
       }
     }
   },
@@ -129,7 +137,7 @@ var UserListView = React.createClass({
       <View style={styles.container}>
         <View style={styles.appStatusWrapper}>
           <Text style={styles.userListCount}>
-            {this.state.dataSource.getRowCount()} 位成員
+            其他 {this.state.dataSource.getRowCount()} 位成員
           </Text>
           <Text style={styles.appStatus}>
             {this.state.appStatus}
@@ -145,10 +153,17 @@ var UserListView = React.createClass({
                     {rowData.displayName}
                   </Text>
                   <Text style={styles.status}>
-                    生理數據 : {this.getStatusWords(rowData.otherDeviceData)}
+                    生理狀態 : {this.getStatusWords(rowData.otherDeviceData)}
                   </Text>
                 </View>
-                <View>
+                <View style={styles.otherDeviceDataWrapper}>
+                  <Text style={styles.otherDeviceDataText}>
+                    {(() => {
+                      if (rowData.otherDeviceData){
+                        return rowData.otherDeviceData.k1 + ' %';
+                      }
+                    })()}
+                  </Text>
                   <View style={[styles.statusIndicator, {backgroundColor: this.getStatusColor(rowData.otherDeviceData)}]}></View>
                 </View>
               </View>
@@ -195,6 +210,7 @@ var styles = StyleSheet.create({
   cellStyle: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     padding: 15,
   },
   name: {
@@ -214,11 +230,19 @@ var styles = StyleSheet.create({
   separatorStyleHide: {
     opacity: 0
   },
+  otherDeviceDataWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  otherDeviceDataText: {
+    fontSize: 20,
+    marginRight: 10,
+  },
   statusIndicator: {
     width: 10,
     height: 10,
     borderRadius: 100,
-    marginTop: 20,
     backgroundColor: Constants.buttonRed
   },
 });
