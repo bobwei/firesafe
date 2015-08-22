@@ -72,7 +72,7 @@ var MainView = React.createClass({
           <Text style={styles.name}>{this.state.deviceName}</Text>
           <Text style={styles.deviceStatus}>{this.state.otherDeviceStatus}</Text>
         </View>
-        <Text style={styles.actionLabel}>手動生理狀態</Text>
+        <Text style={styles.actionLabel}>手動設定生理狀態</Text>
         <View style={styles.buttonWrapper}>
           <TouchableHighlight
             style={[styles.button, {backgroundColor: Constants.buttonGreen}]}
