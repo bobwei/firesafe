@@ -1,5 +1,6 @@
 'use strict';
 
+var assign = require('object-assign');
 var React = require('react-native');
 var {
   StyleSheet,
@@ -39,9 +40,28 @@ var UserListView = React.createClass({
             appStatus: '已開啟連線'
           });
         }else if (appStatus.status === 'logPeers'){
+          // var dataBlob = this.state.dataSource._dataBlob;
+          // var rowIDs = Object
+          //               .keys(dataBlob)
+          //               .reduce(function(s, key){
+          //                 return s.concat(dataBlob[key]);
+          //               }, [])
+          //               .map(function(row){
+          //                 return row.id;
+          //               });
+          // this.setState({
+          //   dataSource: this.state.dataSource
+          //     .cloneWithRows(
+          //       appStatus.data.filter(function(row){
+          //         return rowIDs.indexOf(row.id) < 0;
+          //       })
+          //     )
+          // });
           this.setState({
             dataSource: this.state.dataSource
-              .cloneWithRows(appStatus.data)
+              .cloneWithRows(
+                appStatus.data
+              )
           });
         }else if (appStatus.status === 'foundPeers'){
           this.setState({
@@ -62,18 +82,13 @@ var UserListView = React.createClass({
         }else if (appStatus.status === 'didReceiveData'){
           var dataBlob = this.state.dataSource._dataBlob;
           var rows = Object
-                          .keys(dataBlob)
-                          .reduce(function(s, key){
-                            return s.concat(dataBlob[key]);
-                          }, [])
-                          .map(function(row){
-                            var newRow = {};
-                            Object.keys(row)
-                                  .forEach(function(key){
-                                    newRow[key] = row[key];
-                                  });
-                            return newRow;
-                          });
+                      .keys(dataBlob)
+                      .reduce(function(s, key){
+                        return s.concat(dataBlob[key]);
+                      }, [])
+                      .map(function(row){
+                        return assign({}, row);
+                      });
           var row = rows.filter(function(theRow){
             return theRow.id === appStatus.data.peerID;
           })[0];
