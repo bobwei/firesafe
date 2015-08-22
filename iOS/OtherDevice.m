@@ -21,7 +21,7 @@ RCT_EXPORT_METHOD(initDevice)
   [self.bridge.eventDispatcher sendAppEventWithName:OtherDeviceStatus
                                                body:@{@"status": @"disconnected"}];
 
-
+  
 //  [self.bridge.eventDispatcher sendAppEventWithName:OtherDeviceStatus
 //                                               body:@{@"status": @"connected"}];
 
@@ -32,3 +32,5 @@ RCT_EXPORT_METHOD(initDevice)
 }
 
 @end
+
+

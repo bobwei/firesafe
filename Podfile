@@ -4,6 +4,7 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
 target 'firesafe' do
+  pod 'GCDWebServer', '~> 3.0'
   pod 'AFNetworking', '~> 2.5'
 end
 
