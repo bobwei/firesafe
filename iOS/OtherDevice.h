@@ -10,9 +10,14 @@
 #import "RCTBridge.h"
 #import "RCTEventDispatcher.h"
 #import "RCTBridgeModule.h"
+#import "GCDWebServer.h"
+#import "GCDWebServerDataResponse.h"
+
 
 
 @interface OtherDevice : NSObject <RCTBridgeModule>{
+  GCDWebServer* _webServer;
 }
 
 @end
+
