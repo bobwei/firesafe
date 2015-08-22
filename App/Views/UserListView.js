@@ -125,7 +125,7 @@ var UserListView = React.createClass({
     if (otherDeviceData){
       if (otherDeviceData.k1 > 94){
         return Constants.buttonGreen;
-      }else if (otherDeviceData.k1 > 92){
+      }else if (otherDeviceData.k1 > 91){
         return Constants.buttonYellow;
       }else{
         return Constants.buttonRed;

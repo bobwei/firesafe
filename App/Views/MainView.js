@@ -22,9 +22,21 @@ var MainView = React.createClass({
       otherDeviceStatus: '尚未連接生理數據裝置'
     };
   },
-  onClickHandler: () => {
+  onNormalClickHandler: () => {
     MPC.sendData({
-      k1: _.random(92, 99),
+      k1: _.random(95, 98),
+      k2: 72
+    });
+  },
+  onWarningClickHandler: () => {
+    MPC.sendData({
+      k1: _.random(92, 93),
+      k2: 72
+    });
+  },
+  onDangerClickHandler: () => {
+    MPC.sendData({
+      k1: _.random(88, 91),
       k2: 72
     });
   },
@@ -50,12 +62,8 @@ var MainView = React.createClass({
         console.log(otherDeviceStatus);
       }
     );
-    this.timer = setInterval(() => {
-      this.onClickHandler();
-    }, 5000);
   },
   componentWillUnmount: function(){
-    clearInterval(this.timer);
   },
   render: function() {
     return (
@@ -64,13 +72,30 @@ var MainView = React.createClass({
           <Text style={styles.name}>{this.state.deviceName}</Text>
           <Text style={styles.deviceStatus}>{this.state.otherDeviceStatus}</Text>
         </View>
+        <Text style={styles.actionLabel}>手動設定生理數據</Text>
         <View style={styles.buttonWrapper}>
+          <TouchableHighlight
+            style={[styles.button, {backgroundColor: Constants.buttonGreen}]}
+            underlayColor={Constants.buttonGreen}
+            onPress={this.onNormalClickHandler}>
+              <Text style={styles.buttonText}>
+                正常
+              </Text>
+          </TouchableHighlight>
+          <TouchableHighlight
+            style={[styles.button, {backgroundColor: Constants.buttonYellow}]}
+            underlayColor={Constants.buttonYellow}
+            onPress={this.onWarningClickHandler}>
+              <Text style={styles.buttonText}>
+                異常
+              </Text>
+          </TouchableHighlight>
           <TouchableHighlight
             style={styles.button}
             underlayColor={Constants.buttonRed}
-            onPress={this.onClickHandler}>
+            onPress={this.onDangerClickHandler}>
               <Text style={styles.buttonText}>
-                手動更新我的生理數據
+                危險
               </Text>
           </TouchableHighlight>
         </View>
@@ -87,9 +112,9 @@ var styles = StyleSheet.create({
   },
   deviceStatusWrapper: {
     paddingTop: 10,
-    paddingRight: 15,
+    paddingRight: 10,
     paddingBottom: 10,
-    paddingLeft: 15,
+    paddingLeft: 10,
     marginTop: 10,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -99,16 +124,27 @@ var styles = StyleSheet.create({
     color: Constants.textGray,
     fontSize: 12,
   },
+  actionLabel: {
+    color: Constants.textGray,
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
   name: {
-    fontSize: 17,
+    fontSize: 18,
     color: Constants.textBlack,
   },
   buttonWrapper: {
-    alignItems: 'center',
+    flexDirection: 'row',
+    paddingLeft: 5,
+    paddingRight: 5,
   },
   button: {
-    height: 44,
-    width: 290,
+    height: 40,
+    flex: 1,
+    marginLeft: 5,
+    marginRight: 5,
     backgroundColor: Constants.buttonRed,
     justifyContent: 'center',
     alignItems: 'center',
@@ -116,7 +152,7 @@ var styles = StyleSheet.create({
   },
   buttonText: {
     color: Constants.buttonTextColorWhite,
-    fontSize: 17,
+    fontSize: 16,
   }
 });
 
