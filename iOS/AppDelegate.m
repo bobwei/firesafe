@@ -10,6 +10,7 @@
 #import "AppDelegate.h"
 
 #import "RCTRootView.h"
+#import <GCDWebServerURLEncodedFormRequest.h>
 
 @implementation AppDelegate
 
@@ -20,14 +21,15 @@
   // Create server
   _webServer = [[GCDWebServer alloc] init];
   
-  // Add a handler to respond to GET requests on any URL
-  [_webServer addDefaultHandlerForMethod:@"POST"
-                            requestClass:[GCDWebServerRequest class]
-                            processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
-                              NSLog(@"%ul", request.contentLength);
-                              return [GCDWebServerDataResponse responseWithHTML:@"<html><body><p>Hello World</p></body></html>"];
-                              
-                            }];
+  [_webServer addHandlerForMethod:@"POST"
+                            path:@"/"
+                    requestClass:[GCDWebServerURLEncodedFormRequest class]
+                    processBlock:^GCDWebServerResponse *(GCDWebServerRequest* request) {
+                      [[NSNotificationCenter defaultCenter] postNotificationName:@"receivedOtherDeviceData" object:[(GCDWebServerURLEncodedFormRequest*)request arguments]];
+                      NSString* html = @"{'status':'success'}";
+                      return [GCDWebServerDataResponse responseWithHTML:html];
+                      
+                    }];
   
   // Start server on port 8080
   [_webServer startWithPort:8080 bonjourName:nil];

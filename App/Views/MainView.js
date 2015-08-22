@@ -50,14 +50,16 @@ var MainView = React.createClass({
     this.subscription = NativeAppEventEmitter.addListener(
       'OtherDeviceStatus',
       (otherDeviceStatus) => {
-        if (otherDeviceStatus === 'disconnected'){
+        if (otherDeviceStatus.statue === 'disconnected'){
           this.setState({
             otherDeviceStatus: '尚未連接生理數據裝置'
           });
-        }else if (otherDeviceStatus === 'connected'){
+        }else if (otherDeviceStatus.statue === 'connected'){
           this.setState({
             otherDeviceStatus: '已連接生理數據裝置'
           });
+        }else if (otherDeviceStatus.status === 'receivedData'){
+          MPC.sendData(otherDeviceStatus.data);
         }
         console.log(otherDeviceStatus);
       }
