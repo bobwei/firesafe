@@ -11,6 +11,7 @@ var {
 var Constants = require('../Constants');
 var UserListView = require('./UserListView');
 var MPC = require('react-native').NativeModules.MPC;
+var OtherDevice = require('react-native').NativeModules.OtherDevice;
 
 
 var MainView = React.createClass({
@@ -29,6 +30,7 @@ var MainView = React.createClass({
         deviceName: deviceName
       });
     });
+    OtherDevice.initDevice();
     this.subscription = NativeAppEventEmitter.addListener(
       'OtherDeviceStatus',
       (otherDeviceStatus) => {

@@ -13,7 +13,6 @@
 
 @interface MPC : NSObject <RCTBridgeModule, MCSessionDelegate, MCNearbyServiceAdvertiserDelegate, MCNearbyServiceBrowserDelegate>{
   NSString *displayName;
-  RCTResponseSenderBlock callbackBlock;
   MCNearbyServiceAdvertiser *advertiser;
   MCNearbyServiceBrowser *browser;
   MCSession *session;
