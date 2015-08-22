@@ -6,6 +6,7 @@ var {
   Text,
   View,
   TouchableHighlight,
+  NativeAppEventEmitter,
 } = React;
 var Constants = require('../Constants');
 var UserListView = require('./UserListView');
@@ -15,7 +16,8 @@ var MPC = require('react-native').NativeModules.MPC;
 var MainView = React.createClass({
   getInitialState: () => {
     return {
-      deviceName: 'Device'
+      deviceName: 'Device',
+      otherDeviceStatus: '尚未連接生理數據裝置'
     };
   },
   onClickHandler: () => {
@@ -27,13 +29,28 @@ var MainView = React.createClass({
         deviceName: deviceName
       });
     });
+    this.subscription = NativeAppEventEmitter.addListener(
+      'OtherDeviceStatus',
+      (otherDeviceStatus) => {
+        if (otherDeviceStatus === 'disconnected'){
+          this.setState({
+            otherDeviceStatus: '尚未連接生理數據裝置'
+          });
+        }else if (otherDeviceStatus === 'connected'){
+          this.setState({
+            otherDeviceStatus: '已連接生理數據裝置'
+          });
+        }
+        console.log(otherDeviceStatus);
+      }
+    );
   },
   render: function() {
     return (
       <View style={styles.container}>
         <View style={styles.deviceStatusWrapper}>
           <Text style={styles.name}>{this.state.deviceName}</Text>
-          <Text style={styles.deviceStatus}>尚未連結生理數據裝置</Text>
+          <Text style={styles.deviceStatus}>{this.state.otherDeviceStatus}</Text>
         </View>
         <View style={styles.buttonWrapper}>
           <TouchableHighlight
