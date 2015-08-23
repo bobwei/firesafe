@@ -9,6 +9,7 @@ var {
   TouchableHighlight,
   ListView,
   NativeAppEventEmitter,
+  AlertIOS,
 } = React;
 var Constants = require('../Constants');
 var MPC = require('react-native').NativeModules.MPC;
@@ -82,6 +83,31 @@ var UserListView = React.createClass({
               this.otherDeviceDataCache = {};
             }
             this.otherDeviceDataCache[appStatus.data.peerID] = row.otherDeviceData;
+            if (appStatus.data.k1 >= 97){
+
+            }else if (appStatus.data.k1 >= 90){
+              // if (!this.hasAlert){
+              //   this.hasAlert = true;
+              //   AlertIOS.alert(
+              //     '提醒',
+              //     row.displayName + '生理狀態為異常',
+              //     [{text: '確定', onPress: () => {
+              //       this.hasAlert = false;
+              //     }},]
+              //   )
+              // }
+            }else{
+              if (!this.hasAlert){
+                this.hasAlert = true;
+                AlertIOS.alert(
+                  '提醒',
+                  row.displayName + '生理狀態為危險',
+                  [{text: '確定', onPress: () => {
+                    this.hasAlert = false;
+                  }},]
+                )
+              }
+            }
           }
           this.setState({
             dataSource: this.state.dataSource.cloneWithRows(rows)

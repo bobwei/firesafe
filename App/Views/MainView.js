@@ -59,6 +59,9 @@ var MainView = React.createClass({
             otherDeviceStatus: '已連接生理數據裝置'
           });
         }else if (otherDeviceStatus.status === 'receivedData'){
+          this.setState({
+            otherDeviceStatus: '我的生理數據 : ' + otherDeviceStatus.data.k1
+          });
           MPC.sendData(otherDeviceStatus.data);
         }
         console.log(otherDeviceStatus);
